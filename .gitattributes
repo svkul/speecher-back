@@ -1,0 +1,6 @@
+# Prisma migrations should never be auto-formatted or modified
+# These files are immutable after being applied to the database
+# Modifying them causes checksum mismatches and breaks the migration system
+prisma/migrations/**/*.sql -diff -merge linguist-generated
+prisma/migrations/**/migration.sql -diff -merge linguist-generated
+prisma/migrations/migration_lock.toml -diff -merge linguist-generated

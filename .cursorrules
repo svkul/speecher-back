@@ -1,0 +1,34 @@
+## Documentation Reference
+
+**ALWAYS** refer to backend and database documentation before making changes:
+
+### Backend Documentation
+- `docs/backend/overview.md` - Backend architecture and patterns
+- `docs/backend/config.md` - Configuration management
+- `docs/backend/logger.md` - Logging implementation
+- `docs/backend/date.md` - Date handling
+
+### Database Documentation
+- `docs/database/overview.md` - Database overview and architecture
+- `docs/database/schema.md` - Database schema details
+- `docs/database/migration.md` - Migration guidelines and best practices
+
+### Business Logic
+- `docs/business-logic/overview.md` - Application business logic and requirements
+
+---
+
+## Operational
+- Use provided npm scripts. For Prisma, prefer `prisma:migrate`, `prisma:deploy`, `prisma:generate`.
+
+## Prisma Migrations - CRITICAL RULE
+- **NEVER modify migration files after they are created and applied to the database**
+- Migration files in `prisma/migrations/**/*.sql` and `prisma/migrations/migration_lock.toml` are IMMUTABLE once applied
+- **NEVER format, prettify, or auto-fix migration files** - they are excluded from Prettier, ESLint, and other formatters
+- If you need to fix something, create a NEW migration instead
+- Changing migrations after application causes checksum mismatches and breaks the migration system
+- If migrations were accidentally modified, you must:
+  1. Revert the changes in Git
+  2. Or create a new migration to fix the issue
+  3. Never manually edit applied migrations
+- Always review migration files before committing - ensure they haven't been auto-formatted

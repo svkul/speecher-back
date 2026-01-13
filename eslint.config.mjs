@@ -6,7 +6,14 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: [
+      'eslint.config.mjs',
+      // Prisma migrations - NEVER lint or format these files!
+      // Migrations are immutable after being applied to the database
+      'prisma/migrations/**/*.sql',
+      'prisma/migrations/**/migration.sql',
+      'prisma/migrations/migration_lock.toml',
+    ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

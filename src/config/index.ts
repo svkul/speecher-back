@@ -4,6 +4,9 @@ export const configSchema = () => ({
   PORT: process.env.PORT,
   NODE_ENV: process.env.NODE_ENV,
 
+  // Database
+  DATABASE_URL: process.env.DATABASE_URL,
+
   // Logger
   LOG_CONTEXTS_ALLOW: process.env.LOG_CONTEXTS_ALLOW,
   LOG_CONTEXTS_DENY: process.env.LOG_CONTEXTS_DENY,
@@ -13,6 +16,9 @@ export const configSchema = () => ({
 export const configValidationSchema = Joi.object({
   PORT: Joi.string().required(),
   NODE_ENV: Joi.string().valid('development', 'production').required(),
+
+  // Database
+  DATABASE_URL: Joi.string().required(),
 
   // Logger
   LOG_CONTEXTS_ALLOW: Joi.string().optional().allow(''),

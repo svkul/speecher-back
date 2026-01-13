@@ -1,0 +1,16 @@
+# Dependencies
+node_modules
+dist
+build
+coverage
+
+# Prisma migrations - NEVER format these files!
+# Migrations are immutable after being applied to the database
+# Modifying them causes checksum mismatches and breaks the migration system
+prisma/migrations/**/*.sql
+prisma/migrations/**/migration.sql
+prisma/migrations/migration_lock.toml
+
+# Generated files
+*.generated.*
+generated/
