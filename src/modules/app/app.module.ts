@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerModule } from '../logger/logger.module';
+import { PrismaModule } from '../prisma/prisma.module';
 import { configSchema, configValidationSchema } from '../../config';
 
 @Module({
@@ -18,7 +19,8 @@ import { configSchema, configValidationSchema } from '../../config';
         abortEarly: true,
       },
     }),
-    LoggerModule, // LoggerModule is global, but importing here ensures it's initialized
+    LoggerModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { FilteredLogger } from './filtered-logger.service';
 
 /**
@@ -51,7 +51,6 @@ const parseLogLevels = (value?: string): LogLevel[] =>
  */
 @Global()
 @Module({
-  imports: [ConfigModule],
   providers: [
     {
       provide: FilteredLogger,
