@@ -16,6 +16,10 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   userId    String   @unique // Google ID or Apple ID - must be unique
+  email     String   @unique // Email from Google/Apple authentication
+  firstName String?
+  lastName  String?
+  avatar    String?
   trialUsed Boolean  @default(false)
   createdAt DateTime @default(now()) // Automatically uses timestamptz in PostgreSQL
   updatedAt DateTime @updatedAt
