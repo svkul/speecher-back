@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { AppModule } from './modules/app/app.module';
@@ -13,6 +14,18 @@ async function bootstrap() {
     // Get FilteredLogger instance and set it as global logger
     const logger = app.get(FilteredLogger);
     app.useLogger(logger);
+
+    // Enable validation pipe for DTO validation
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true, // Strip properties that don't have decorators
+        forbidNonWhitelisted: true, // Throw error if non-whitelisted properties are present
+        transform: true, // Automatically transform payloads to DTO instances
+        transformOptions: {
+          enableImplicitConversion: true, // Enable implicit type conversion
+        },
+      }),
+    );
 
     const configService = app.get(ConfigService);
     const PORT = configService.getOrThrow<string>('PORT');

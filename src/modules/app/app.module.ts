@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerModule } from '../logger/logger.module';
 import { PrismaModule } from '../prisma/prisma.module';
+import { UserModule } from '../user/user.module';
 import { configSchema, configValidationSchema } from '../../config';
 
 @Module({
@@ -21,6 +22,7 @@ import { configSchema, configValidationSchema } from '../../config';
     }),
     LoggerModule,
     PrismaModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
