@@ -5,7 +5,6 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CurrentUser } from './decorator/user.decorator';
@@ -25,16 +24,7 @@ export class UserController {
   async getCurrentUser(
     @CurrentUser() user: UserModel | undefined,
   ): Promise<UserResponseDto> {
-    if (!user?.id) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
-    // If user is already loaded from auth guard, use it
-    // Otherwise fetch from database
-    const userData = await this.userService.findById(user.id);
-
-    // Type assertion: Prisma returns all fields at runtime, but TypeScript may infer a partial type
-    return new UserResponseDto(userData);
+    return await this.userService.getCurrentUser(user);
   }
 
   /**
@@ -47,12 +37,6 @@ export class UserController {
     @CurrentUser() user: UserModel | undefined,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    if (!user?.id) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
-    const updatedUser = await this.userService.update(user.id, updateUserDto);
-    // Type assertion: Prisma returns all fields at runtime, but TypeScript may infer a partial type
-    return new UserResponseDto(updatedUser);
+    return await this.userService.updateCurrentUser(user, updateUserDto);
   }
 }
