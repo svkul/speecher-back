@@ -7,6 +7,13 @@
 - `docs/backend/config.md` - Configuration management
 - `docs/backend/logger.md` - Logging implementation
 - `docs/backend/date.md` - Date handling
+- `docs/backend/dto.md` - DTO structure and validation
+- `docs/backend/modules.md` - Module structure and organization
+- `docs/backend/services.md` - Service layer patterns
+- `docs/backend/controllers.md` - Controller patterns and REST API
+- `docs/backend/response.md` - Response structure and standards
+- `docs/backend/errors.md` - Error handling and exceptions
+- `docs/backend/decorator.md` - Custom decorators
 
 ### Database Documentation
 - `docs/database/overview.md` - Database overview and architecture
