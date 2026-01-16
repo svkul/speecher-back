@@ -55,4 +55,7 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-/generated/prisma
+# Prisma generated files (if generated in root)
+/generated
+
+# Note: src/generated/prisma is tracked in git as it's the correct output path

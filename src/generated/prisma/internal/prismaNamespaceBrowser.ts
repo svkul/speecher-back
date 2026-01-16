@@ -52,6 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Session: 'Session',
+  OAuthAccount: 'OAuthAccount',
   Speech: 'Speech',
   SpeechBlock: 'SpeechBlock'
 } as const
@@ -74,17 +76,47 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
   email: 'email',
   firstName: 'firstName',
   lastName: 'lastName',
   avatar: 'avatar',
+  role: 'role',
+  language: 'language',
   trialUsed: 'trialUsed',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const SessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  refreshToken: 'refreshToken',
+  expiresAt: 'expiresAt',
+  refreshExpiresAt: 'refreshExpiresAt',
+  userAgent: 'userAgent',
+  ipAddress: 'ipAddress',
+  createdAt: 'createdAt',
+  lastUsedAt: 'lastUsedAt'
+} as const
+
+export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const OAuthAccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  provider: 'provider',
+  providerId: 'providerId',
+  email: 'email',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OAuthAccountScalarFieldEnum = (typeof OAuthAccountScalarFieldEnum)[keyof typeof OAuthAccountScalarFieldEnum]
 
 
 export const SpeechScalarFieldEnum = {

@@ -43,6 +43,16 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model Session
+ * 
+ */
+export type Session = Prisma.SessionModel
+/**
+ * Model OAuthAccount
+ * 
+ */
+export type OAuthAccount = Prisma.OAuthAccountModel
+/**
  * Model Speech
  * 
  */
