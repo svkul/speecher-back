@@ -10,10 +10,10 @@ import {
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
-import { OAuthSignInDto, RefreshTokenDto } from './dto/auth.input';
-import { AuthResponseDto, RefreshTokenResponseDto } from './dto/auth.response';
+import { OAuthSignInDto } from './dto/auth.input';
+import { AuthResponseDto } from './dto/auth.response';
 import { CurrentUser } from '../user/decorator/user.decorator';
-import { UserModel } from '../../../generated/prisma/models/User';
+import { UserModel } from '../../generated/prisma/models/User';
 import { AuthGuardConfig } from './decorator/auth.decorator';
 import { FilteredLogger } from '../logger/filtered-logger.service';
 

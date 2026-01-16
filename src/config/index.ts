@@ -11,6 +11,29 @@ export const configSchema = () => ({
   LOG_CONTEXTS_ALLOW: process.env.LOG_CONTEXTS_ALLOW,
   LOG_CONTEXTS_DENY: process.env.LOG_CONTEXTS_DENY,
   LOG_LEVELS: process.env.LOG_LEVELS,
+
+  // JWT
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    refreshSecret: process.env.JWT_REFRESH_SECRET,
+    accessTokenExpiry: process.env.JWT_ACCESS_TOKEN_EXPIRY,
+    refreshTokenExpiry: process.env.JWT_REFRESH_TOKEN_EXPIRY,
+  },
+
+  // OAuth
+  oauth: {
+    google: {
+      clientIdWeb: process.env.OAUTH_GOOGLE_CLIENT_ID_WEB,
+      clientIdIos: process.env.OAUTH_GOOGLE_CLIENT_ID_IOS,
+      clientIdAndroid: process.env.OAUTH_GOOGLE_CLIENT_ID_ANDROID,
+    },
+    apple: {
+      clientId: process.env.OAUTH_APPLE_CLIENT_ID,
+    },
+  },
+
+  // Cookies
+  cookieDomain: process.env.COOKIE_DOMAIN,
 });
 
 export const configValidationSchema = Joi.object({
@@ -24,4 +47,31 @@ export const configValidationSchema = Joi.object({
   LOG_CONTEXTS_ALLOW: Joi.string().optional().allow(''),
   LOG_CONTEXTS_DENY: Joi.string().optional().allow(''),
   LOG_LEVELS: Joi.string().default('log,error,warn,debug,verbose'),
+
+  // JWT
+  jwt: Joi.object({
+    secret: Joi.string().required(),
+    refreshSecret: Joi.string().required(),
+    accessTokenExpiry: Joi.string()
+      .pattern(/^\d+[smhd]$/)
+      .default('15m'),
+    refreshTokenExpiry: Joi.string()
+      .pattern(/^\d+[smhd]$/)
+      .default('7d'),
+  }).required(),
+
+  // OAuth
+  oauth: Joi.object({
+    google: Joi.object({
+      clientIdWeb: Joi.string().optional().allow(''),
+      clientIdIos: Joi.string().optional().allow(''),
+      clientIdAndroid: Joi.string().optional().allow(''),
+    }).optional(),
+    apple: Joi.object({
+      clientId: Joi.string().optional().allow(''),
+    }).optional(),
+  }).optional(),
+
+  // Cookies
+  cookieDomain: Joi.string().optional().allow(''),
 });

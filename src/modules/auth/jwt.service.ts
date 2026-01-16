@@ -73,14 +73,8 @@ export class JwtTokenService {
     );
 
     // Calculate expiry dates
-    const accessTokenExpiry = this.parseExpiry(
-      this.configService.get<string>('jwt.accessTokenExpiry', { infer: true }),
-    );
-    const refreshTokenExpiry = this.parseExpiry(
-      this.configService.get<string>('jwt.refreshTokenExpiry', {
-        infer: true,
-      }),
-    );
+    const accessTokenExpiry = this.parseExpiry(accessExpiry);
+    const refreshTokenExpiry = this.parseExpiry(refreshExpiry);
 
     // Store session in database
     try {

@@ -56,7 +56,7 @@ export class AuthService {
         },
       });
 
-      let user: UserModel;
+      let user: UserModel | null;
 
       if (oauthAccount) {
         // User exists, use their account
@@ -107,9 +107,10 @@ export class AuthService {
         language?: string;
       } = {};
       if (oauthUser.firstName || oauthUser.lastName || oauthUser.avatar) {
-        updateData.firstName = oauthUser.firstName || user.firstName;
-        updateData.lastName = oauthUser.lastName || user.lastName;
-        updateData.avatar = oauthUser.avatar || user.avatar;
+        updateData.firstName =
+          oauthUser.firstName || user.firstName || undefined;
+        updateData.lastName = oauthUser.lastName || user.lastName || undefined;
+        updateData.avatar = oauthUser.avatar || user.avatar || undefined;
       }
       // Update language if not set and provided
       if (language && !user.language) {
