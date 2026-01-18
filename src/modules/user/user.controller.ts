@@ -10,7 +10,7 @@ import { UserService } from './user.service';
 import { CurrentUser } from './decorator/user.decorator';
 import { UpdateUserDto } from './dto/user.input';
 import { UserResponseDto } from './dto/user.response';
-import { UserModel } from '../../../generated/prisma/models/User';
+import { UserModel } from '../../generated/prisma/models/User';
 
 @Controller('user')
 export class UserController {

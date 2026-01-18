@@ -49,29 +49,21 @@ export const configValidationSchema = Joi.object({
   LOG_LEVELS: Joi.string().default('log,error,warn,debug,verbose'),
 
   // JWT
-  jwt: Joi.object({
-    secret: Joi.string().required(),
-    refreshSecret: Joi.string().required(),
-    accessTokenExpiry: Joi.string()
-      .pattern(/^\d+[smhd]$/)
-      .default('15m'),
-    refreshTokenExpiry: Joi.string()
-      .pattern(/^\d+[smhd]$/)
-      .default('7d'),
-  }).required(),
+  JWT_SECRET: Joi.string().required(),
+  JWT_REFRESH_SECRET: Joi.string().required(),
+  JWT_ACCESS_TOKEN_EXPIRY: Joi.string()
+    .pattern(/^\d+[smhd]$/)
+    .default('15m'),
+  JWT_REFRESH_TOKEN_EXPIRY: Joi.string()
+    .pattern(/^\d+[smhd]$/)
+    .default('7d'),
 
   // OAuth
-  oauth: Joi.object({
-    google: Joi.object({
-      clientIdWeb: Joi.string().optional().allow(''),
-      clientIdIos: Joi.string().optional().allow(''),
-      clientIdAndroid: Joi.string().optional().allow(''),
-    }).optional(),
-    apple: Joi.object({
-      clientId: Joi.string().optional().allow(''),
-    }).optional(),
-  }).optional(),
+  OAUTH_GOOGLE_CLIENT_ID_WEB: Joi.string().optional().allow(''),
+  OAUTH_GOOGLE_CLIENT_ID_IOS: Joi.string().optional().allow(''),
+  OAUTH_GOOGLE_CLIENT_ID_ANDROID: Joi.string().optional().allow(''),
+  OAUTH_APPLE_CLIENT_ID: Joi.string().optional().allow(''),
 
   // Cookies
-  cookieDomain: Joi.string().optional().allow(''),
+  COOKIE_DOMAIN: Joi.string().optional().allow(''),
 });
