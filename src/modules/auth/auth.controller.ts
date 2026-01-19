@@ -74,7 +74,9 @@ export class AuthController {
     await this.authService.signOut(user);
 
     // Clear cookies for web clients
-    if (response && clientType === 'nextjs-admin') {
+    const isWebClient =
+      clientType === 'nextjs-admin' || clientType === 'expo-web';
+    if (response && isWebClient) {
       this.clearAuthCookies(response);
     }
   }

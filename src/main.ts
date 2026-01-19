@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import cookieParser from 'cookie-parser';
 
 import { AppModule } from './modules/app/app.module';
 import { FilteredLogger } from './modules/logger/filtered-logger.service';
@@ -54,6 +55,9 @@ async function bootstrap() {
         'x-refresh-token-expiry',
       ],
     });
+
+    // Enable cookie parser middleware for httpOnly cookies support
+    app.use(cookieParser());
 
     // Enable validation pipe for DTO validation
     app.useGlobalPipes(
