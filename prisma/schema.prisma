@@ -5,8 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -24,6 +23,11 @@ model User {
   trialUsed Boolean  @default(false)
   createdAt DateTime @default(now()) // Automatically uses timestamptz in PostgreSQL
   updatedAt DateTime @updatedAt
+
+  // TTS usage tracking
+  subscriptionTier      SubscriptionTier @default(FREE)
+  monthlyCharactersUsed Int              @default(0) // Characters used this month
+  lastResetDate         DateTime         @default(now()) // For monthly quota reset
 
   // Relations
   speeches      Speech[]
@@ -92,6 +96,14 @@ model SpeechBlock {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // TTS settings
+  ttsLanguage    String?   @default("en-US") // Language code (en-US, uk-UA)
+  ttsVoice       String? // Voice name (en-US-Neural2-A)
+  ttsModel       String?   @default("Standard") // Model type (Standard, WaveNet, Neural2)
+  ttsStyle       String?   @db.Text // Style instructions/SSML
+  charactersUsed Int? // Characters used for generation (for cost tracking)
+  generatedAt    DateTime? // When audio was generated
+
   // Relations
   speech Speech @relation(fields: [speechId], references: [id], onDelete: Cascade)
 
@@ -103,4 +115,10 @@ model SpeechBlock {
 enum UserRole {
   ADMIN
   CUSTOMER
+}
+
+enum SubscriptionTier {
+  FREE
+  BASIC
+  PREMIUM
 }

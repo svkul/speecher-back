@@ -1,4 +1,4 @@
-import { UserModel } from '../../../generated/prisma/models/User';
+import { User } from '@prisma/client';
 
 /**
  * Response DTO for user data
@@ -15,7 +15,7 @@ export class UserResponseDto {
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(user: UserModel | Partial<UserModel>) {
+  constructor(user: User | Partial<User>) {
     this.id = user.id!;
     this.email = user.email ?? '';
     this.firstName = user.firstName ?? null;

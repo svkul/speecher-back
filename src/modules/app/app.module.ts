@@ -8,6 +8,8 @@ import { LoggerModule } from '../logger/logger.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
+import { TtsModule } from '../tts/tts.module';
+import { SpeechModule } from '../speech/speech.module';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { configSchema, configValidationSchema } from '../../config';
 
@@ -27,6 +29,8 @@ import { configSchema, configValidationSchema } from '../../config';
     PrismaModule,
     AuthModule,
     UserModule,
+    TtsModule,
+    SpeechModule,
   ],
   controllers: [AppController],
   providers: [

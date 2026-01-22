@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserModel } from '../../generated/prisma/models/User';
+import { User } from '@prisma/client';
 import { UpdateUserDto } from './dto/user.input';
 import { UserResponseDto } from './dto/user.response';
-import {
-  ResourceNotFoundException,
-  UnauthorizedException,
-} from '../../utils/errors';
+import { ResourceNotFoundException } from '../../utils/errors';
 
 @Injectable()
 export class UserService {
@@ -17,11 +14,7 @@ export class UserService {
    * @param user - Current user from request (can be undefined)
    * @returns UserResponseDto or throws UnauthorizedException
    */
-  async getCurrentUser(user: UserModel | undefined): Promise<UserResponseDto> {
-    if (!user?.id) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
+  async getCurrentUser(user: User): Promise<UserResponseDto> {
     // If user is already loaded from auth guard, use it
     // Otherwise fetch from database
     const userData = await this.findById(user.id);
@@ -36,13 +29,9 @@ export class UserService {
    * @returns UserResponseDto or throws UnauthorizedException
    */
   async updateCurrentUser(
-    user: UserModel | undefined,
+    user: User,
     updateData: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    if (!user?.id) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
     const updatedUser = await this.update(user.id, updateData);
     return new UserResponseDto(updatedUser);
   }
@@ -52,7 +41,7 @@ export class UserService {
    * @param id - User ID (UUID)
    * @returns User or throws ResourceNotFoundException
    */
-  async findById(id: string): Promise<UserModel> {
+  async findById(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -70,7 +59,7 @@ export class UserService {
    * @param updateData - Data to update (firstName, lastName, avatar)
    * @returns Updated user
    */
-  async update(id: string, updateData: UpdateUserDto): Promise<UserModel> {
+  async update(id: string, updateData: UpdateUserDto): Promise<User> {
     // Check if user exists
     await this.findById(id);
 

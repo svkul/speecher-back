@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService as NestJwtService, JwtSignOptions } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole } from '../../generated/prisma/enums';
+import { UserRole } from '@prisma/client';
 import * as crypto from 'crypto';
 import { sanitizeUserId, sanitizeEmail } from '../../utils/safe-logger.util';
 import { FilteredLogger } from '../logger/filtered-logger.service';

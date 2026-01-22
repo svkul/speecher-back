@@ -13,7 +13,7 @@ import { AuthService } from './auth.service';
 import { OAuthSignInDto } from './dto/auth.input';
 import { AuthResponseDto } from './dto/auth.response';
 import { CurrentUser } from '../user/decorator/user.decorator';
-import { UserModel } from '../../generated/prisma/models/User';
+import { User } from '@prisma/client';
 import { AuthGuardConfig } from './decorator/auth.decorator';
 import { FilteredLogger } from '../logger/filtered-logger.service';
 
@@ -67,7 +67,7 @@ export class AuthController {
   @Post('signout')
   @HttpCode(HttpStatus.NO_CONTENT)
   async signOut(
-    @CurrentUser() user: UserModel | undefined,
+    @CurrentUser() user: User,
     @Headers('x-client-type') clientType?: string,
     @Res({ passthrough: true }) response?: Response,
   ): Promise<void> {

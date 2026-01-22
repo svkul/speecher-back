@@ -4,8 +4,7 @@ import { JwtTokenService } from './jwt.service';
 import { OAuthService } from './oauth.service';
 import { OAuthSignInDto } from './dto/auth.input';
 import { sanitizeUserId } from '../../utils/safe-logger.util';
-import { UserModel } from '../../generated/prisma/models/User';
-import { UserRole } from '../../generated/prisma/enums';
+import { User, UserRole } from '@prisma/client';
 import { FilteredLogger } from '../logger/filtered-logger.service';
 import {
   InternalServerException,
@@ -56,7 +55,7 @@ export class AuthService {
         },
       });
 
-      let user: UserModel | null;
+      let user: User | null;
 
       if (oauthAccount) {
         // User exists, use their account
@@ -153,7 +152,7 @@ export class AuthService {
     }
   }
 
-  async signOut(user: UserModel | undefined): Promise<void> {
+  async signOut(user: User | undefined): Promise<void> {
     if (!user?.id) {
       throw new UnauthorizedException('User not authenticated');
     }

@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { UserRole } from '../../../generated/prisma/enums';
+import { UserRole } from '@prisma/client';
 
 /**
  * Interface for authenticated user data attached to request

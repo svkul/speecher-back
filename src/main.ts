@@ -71,9 +71,9 @@ async function bootstrap() {
       }),
     );
 
-    const configService = app.get<ConfigService>(ConfigService);
-    const PORT = configService.get<string>('PORT');
-    const NODE_ENV = configService.get<string>('NODE_ENV');
+    const configService = app.get(ConfigService);
+    const PORT = configService.getOrThrow<string>('PORT');
+    const NODE_ENV = configService.getOrThrow<string>('NODE_ENV');
 
     logger.log(`Listening on port ${PORT} (env: ${NODE_ENV})`, 'Bootstrap');
 

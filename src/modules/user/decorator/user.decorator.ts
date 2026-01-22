@@ -1,26 +1,31 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
-import { UserModel } from '../../../generated/prisma/models/User';
+import { User } from '@prisma/client';
+import { UnauthorizedException } from '../../../utils/errors';
 
 /**
  * Decorator to get current authenticated user from request
  * Works with REST API context
+ * Throws UnauthorizedException if user is not present in request
  *
  * @param data - Optional key to extract specific property from user object
  * @returns User object or specific property if key is provided
  */
 export const CurrentUser = createParamDecorator(
-  (data: keyof UserModel | undefined, context: ExecutionContext) => {
+  (data: string | undefined, context: ExecutionContext) => {
     const request = context
       .switchToHttp()
-      .getRequest<Request & { user?: UserModel }>();
+      .getRequest<Request & { user: User }>();
 
-    const user: UserModel | undefined = request?.user;
+    const user = request.user;
 
     if (!user) {
-      return undefined;
+      throw new UnauthorizedException(
+        'User not authenticated',
+        'User object not found in request',
+      );
     }
 
-    return data ? user[data] : user;
+    return data ? user[data as keyof User] : user;
   },
 );

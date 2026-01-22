@@ -3,7 +3,7 @@
  * Prevents sensitive information leakage in logs
  */
 
-import { Prisma } from '../generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 /**
  * Safely convert Prisma JsonValue to Record<string, any>

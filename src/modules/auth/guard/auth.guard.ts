@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { JwtTokenService } from '../jwt.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { UserModel } from '../../../generated/prisma/models/User';
+import { User } from '@prisma/client';
 import { AuthGuardConfigOptions } from './auth-guard-config.interface';
 import { AUTH_GUARD_CONFIG_KEY } from '../decorator/auth.decorator';
 import { FilteredLogger } from '../../logger/filtered-logger.service';
@@ -24,7 +24,7 @@ interface RequestWithUser extends Request {
     accessToken?: string;
     refreshToken?: string;
   };
-  user?: UserModel;
+  user?: User;
 }
 
 @Injectable()
