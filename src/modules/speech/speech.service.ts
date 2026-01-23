@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as fs from 'fs/promises';
-import * as path from 'path';
 import { PrismaService } from '../prisma/prisma.service';
 import { TtsService } from '../tts/tts.service';
+import { StorageService } from '../storage/storage.service';
 import { FilteredLogger } from '../logger/filtered-logger.service';
 import {
   ResourceNotFoundException,
@@ -44,6 +43,7 @@ export class SpeechService {
     private readonly logger: FilteredLogger,
     private readonly prisma: PrismaService,
     private readonly ttsService: TtsService,
+    private readonly storageService: StorageService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -354,8 +354,23 @@ export class SpeechService {
       pitch,
     });
 
-    // Save audio to storage
-    const audioUrl = await this.saveAudioFile(audioBuffer, block.id);
+    // Get speech to extract userId for folder structure
+    const speech = await this.prisma.speechBlock.findUnique({
+      where: { id: block.id },
+      include: { speech: true },
+    });
+
+    if (!speech) {
+      throw new ResourceNotFoundException('Speech block not found');
+    }
+
+    // Save audio to GCS
+    const audioUrl = await this.saveAudioFile(
+      audioBuffer,
+      speech.speech.userId,
+      speech.speechId,
+      block.id,
+    );
 
     // Calculate duration and character count
     const duration = this.ttsService.calculateEstimatedDuration(block.text);
@@ -383,65 +398,27 @@ export class SpeechService {
   }
 
   /**
-   * Save audio file to storage
+   * Save audio file to GCS
    */
   private async saveAudioFile(
     audioBuffer: Buffer,
+    userId: string,
+    speechId: string,
     blockId: string,
   ): Promise<string> {
-    const storageType = this.configService.get<string>('storage.type', 'local');
-
-    // For now, implement local storage
-    // TODO: Implement GCS, S3, R2 storage
-    if (storageType === 'local') {
-      const localPath =
-        this.configService.get<string>('storage.localPath') || './uploads';
-      const fileName = `${blockId}-${Date.now()}.mp3`;
-      const filePath = path.join(localPath, fileName);
-
-      // Ensure directory exists
-      await fs.mkdir(localPath, { recursive: true });
-
-      // Write file
-      await fs.writeFile(filePath, audioBuffer);
-
-      // Return URL (adjust based on your serving strategy)
-      return `/audio/${fileName}`;
-    }
-
-    // TODO: Implement cloud storage (GCS, S3, R2)
-    throw new ValidationException(
-      `Storage type ${storageType} not implemented yet`,
+    return await this.storageService.uploadAudioFile(
+      audioBuffer,
+      userId,
+      speechId,
+      blockId,
     );
   }
 
   /**
-   * Delete audio file from storage
+   * Delete audio file from GCS
    */
   private async deleteAudioFile(audioUrl: string): Promise<void> {
-    try {
-      const storageType = this.configService.get<string>(
-        'storage.type',
-        'local',
-      );
-
-      if (storageType === 'local') {
-        const localPath =
-          this.configService.get<string>('storage.localPath') || './uploads';
-        const fileName = audioUrl.split('/').pop();
-        if (fileName) {
-          const filePath = path.join(localPath, fileName);
-          await fs.unlink(filePath);
-        }
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
-      this.logger.warn(
-        `Failed to delete audio file ${audioUrl}: ${errorMessage}`,
-        'SpeechService',
-      );
-    }
+    await this.storageService.deleteAudioFile(audioUrl);
   }
 
   /**
