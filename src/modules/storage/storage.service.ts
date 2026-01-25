@@ -48,30 +48,20 @@ export class StorageService implements OnModuleInit {
           keyFilename: keyFilePath,
           projectId,
         });
-        this.logger.log(
-          'Storage client initialized with key file',
-          'StorageService',
-        );
       } else if (credentials) {
         const parsedCredentials = JSON.parse(credentials) as {
           project_id?: string;
+          client_email?: string;
           [key: string]: unknown;
         };
+
         this.storage = new Storage({
           credentials: parsedCredentials,
           projectId: projectId || parsedCredentials.project_id,
         });
-        this.logger.log(
-          'Storage client initialized with JSON credentials',
-          'StorageService',
-        );
       } else {
         // Use Application Default Credentials
         this.storage = new Storage({ projectId });
-        this.logger.log(
-          'Storage client initialized with ADC',
-          'StorageService',
-        );
       }
 
       // Verify bucket exists
@@ -81,21 +71,31 @@ export class StorageService implements OnModuleInit {
       if (!exists) {
         throw new Error(`Bucket ${this.bucketName} does not exist`);
       }
-
-      this.logger.log(
-        `Storage initialized with bucket: ${this.bucketName}`,
-        'StorageService',
-      );
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+        error instanceof Error ? error.message : String(error);
       const errorStack = error instanceof Error ? error.stack : undefined;
+      const errorName = error instanceof Error ? error.name : typeof error;
 
       this.logger.error(
         `Failed to initialize Storage: ${errorMessage}`,
         errorStack,
         'StorageService',
       );
+      // Enhanced error logging
+      const errorDetails: Record<string, unknown> = {
+        message: errorMessage,
+        name: errorName,
+        bucketName: this.bucketName,
+      };
+
+      if (error && typeof error === 'object') {
+        Object.keys(error).forEach((key) => {
+          if (!['message', 'stack', 'name'].includes(key)) {
+            errorDetails[key] = (error as Record<string, unknown>)[key];
+          }
+        });
+      }
 
       throw new InternalServerException('Failed to initialize storage service');
     }
@@ -115,12 +115,12 @@ export class StorageService implements OnModuleInit {
     speechId: string,
     blockId: string,
   ): Promise<string> {
-    try {
-      // Generate file path: users/{userId}/speeches/{speechId}/{blockId}-{timestamp}.mp3
-      const timestamp = Date.now();
-      const fileName = `${blockId}-${timestamp}.mp3`;
-      const filePath = `users/${userId}/speeches/${speechId}/${fileName}`;
+    // Generate file path: users/{userId}/speeches/{speechId}/{blockId}-{timestamp}.mp3
+    const timestamp = Date.now();
+    const fileName = `${blockId}-${timestamp}.mp3`;
+    const filePath = `users/${userId}/speeches/${speechId}/${fileName}`;
 
+    try {
       const bucket = this.storage.bucket(this.bucketName);
       const file = bucket.file(filePath);
 
@@ -130,7 +130,6 @@ export class StorageService implements OnModuleInit {
           contentType: 'audio/mpeg',
           cacheControl: 'public, max-age=31536000', // Cache for 1 year
         },
-        public: true, // Make file publicly accessible
       });
 
       // Get public URL
@@ -144,14 +143,27 @@ export class StorageService implements OnModuleInit {
       return publicUrl;
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+        error instanceof Error ? error.message : String(error);
       const errorStack = error instanceof Error ? error.stack : undefined;
+      const errorName = error instanceof Error ? error.name : typeof error;
 
-      this.logger.error(
-        `Failed to upload file: ${errorMessage}`,
-        errorStack,
-        'StorageService',
-      );
+      // Log error details including any additional properties
+      const errorDetails: Record<string, unknown> = {
+        message: errorMessage,
+        name: errorName,
+        filePath,
+        bucketName: this.bucketName,
+        bufferSize: buffer.length,
+      };
+
+      // Extract additional error properties (like code, statusCode, etc.)
+      if (error && typeof error === 'object') {
+        Object.keys(error).forEach((key) => {
+          if (!['message', 'stack', 'name'].includes(key)) {
+            errorDetails[key] = (error as Record<string, unknown>)[key];
+          }
+        });
+      }
 
       throw new InternalServerException(
         `Failed to upload audio file: ${errorMessage}`,
@@ -169,10 +181,6 @@ export class StorageService implements OnModuleInit {
       const filePath = this.extractFilePathFromUrl(fileUrl);
 
       if (!filePath) {
-        this.logger.warn(
-          `Could not extract file path from URL: ${fileUrl}`,
-          'StorageService',
-        );
         return;
       }
 
@@ -188,20 +196,20 @@ export class StorageService implements OnModuleInit {
 
       // Delete file
       await file.delete();
-
-      this.logger.log(
-        `File deleted successfully: ${filePath}`,
-        'StorageService',
-      );
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+        error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
 
       // Log warning but don't throw - deletion failures shouldn't block other operations
       this.logger.warn(
         `Failed to delete file ${fileUrl}: ${errorMessage}`,
         'StorageService',
       );
+
+      if (errorStack) {
+        this.logger.debug(errorStack, 'StorageService');
+      }
     }
   }
 
@@ -213,6 +221,7 @@ export class StorageService implements OnModuleInit {
   async deleteAllSpeechFiles(userId: string, speechId: string): Promise<void> {
     try {
       const prefix = `users/${userId}/speeches/${speechId}/`;
+
       const bucket = this.storage.bucket(this.bucketName);
 
       // Get all files with the prefix
@@ -235,12 +244,17 @@ export class StorageService implements OnModuleInit {
       );
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+        error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
 
       this.logger.warn(
         `Failed to delete speech files ${speechId}: ${errorMessage}`,
         'StorageService',
       );
+
+      if (errorStack) {
+        this.logger.debug(errorStack, 'StorageService');
+      }
     }
   }
 
