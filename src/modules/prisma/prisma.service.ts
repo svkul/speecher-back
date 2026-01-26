@@ -19,8 +19,7 @@ export class PrismaService
   private readonly pool: Pool;
 
   constructor(private configService: ConfigService) {
-    // Prisma 7 requires either adapter or accelerateUrl
-    // Using @prisma/adapter-pg for PostgreSQL connection
+    // Using @prisma/adapter-pg for PostgreSQL connection pooling
     // Using ConfigService instead of process.env for better NestJS integration
     const databaseUrl = configService.getOrThrow<string>('DATABASE_URL');
     const pool = new Pool({
